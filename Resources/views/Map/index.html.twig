@@ -1,4 +1,20 @@
 {% extends "MapBundle:Map:base.html.twig" %}
 {% block content %}
-mapa
+<!-- Map Section -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-8"><div id="map"></div></div>
+        <div class="col-md-4">
+            <label for="search">{{'map.enter-searching-value'|trans}}</label>
+            <input id="search" type="text" name="text" value="" placeholder="{{'map.start-typing'|trans}}">
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block js %}
+    {{parent()}}
+    <script src="/bundles/map/js/map-task.js" charset="utf-8"></script>
 {% endblock %}
