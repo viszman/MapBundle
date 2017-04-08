@@ -8,6 +8,6 @@ class MapController extends Controller
 {
     public function indexAction()
     {
-        return $this->render('MapBundle:Default:index.html.twig');
+        return $this->render('MapBundle:Map:index.html.twig');
     }
 }
