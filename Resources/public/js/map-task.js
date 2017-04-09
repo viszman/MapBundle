@@ -1,4 +1,6 @@
 var map = {
+    searchButton : document.querySelector('#search'),
+
     makeMap : function (){
         var loc = this.location.split(","),
             pos = new google.maps.LatLng(loc[0], loc[1]);
@@ -22,10 +24,27 @@ var map = {
 
     geocoder: new google.maps.Geocoder(),
 
+    geocodeLatLng: function (latlng) {
+        this.geocoder.geocode({'location': latlng}, function(results, status) {
+          if (status === 'OK') {
+            if (results[1]) {
+                map.placeMarker(latlng);
+                console.log(results[1].formatted_address);
+            } else {
+              window.alert('No results found');
+            }
+          } else {
+            window.alert('Geocoder failed due to: ' + status);
+          }
+        });
+    },
+
     getLatLng: function(address){
-        map.geocoder.geocode({"address": address}, function(results, status) {
+        this.geocoder.geocode({"address": address}, function(results, status) {
             if (status === google.maps.GeocoderStatus.OK) {
-                map.mapObj.setCenter(results[0].geometry.location);
+                var location = results[0].geometry.location;
+                map.mapObj.setCenter(location);
+                map.placeMarker(location);
             } else {
                 alert("Rozpoznanie położenia nie udalo się z nastepujących przyczyn: " + status);
             }
@@ -34,11 +53,11 @@ var map = {
 
     clickEvent : function(){
         google.maps.event.addListener(this.mapObj, 'click', function(event){
-            console.log('dupa');
+            //TODO
         });
         google.maps.event.addListener(this.mapObj, 'dblclick', function(event) {
-            console.log(event.latLng);
-            setTimeout(map.placeMarker(event.latLng), 600);
+            console.log(event);
+            setTimeout(map.geocodeLatLng(event.latLng), 600);
         });
     },
 
@@ -49,10 +68,26 @@ var map = {
         });
     },
 
+    setSearching: function(){
+        var button =  document.querySelector('#find-button');
+        button.onclick = function(e){
+            map.getLatLng(map.searchButton.value);
+        };
+    },
+
+    setAutocomplete: function(){
+        this.autocomplete = new google.maps.places.Autocomplete(map.searchButton, {types: ['geocode']});
+        this.autocomplete.addListener('place_changed', function(){
+            //TODO
+        });
+    },
+
     init: function(initData) {
         this.location = initData.location;
         this.makeMap();
         this.clickEvent();
+        this.setSearching();
+        this.setAutocomplete();
     }
 }
 
