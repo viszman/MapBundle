@@ -1,5 +1,10 @@
 var map = {
     searchButton : document.querySelector('#search'),
+    formInputs: {
+        name:'mapbundle_location_name',
+        lat: 'mapbundle_location_lat',
+        lng: 'mapbundle_location_lng',
+    },
 
     makeMap : function (){
         var loc = this.location.split(","),
@@ -24,28 +29,51 @@ var map = {
 
     geocoder: new google.maps.Geocoder(),
 
-    geocodeLatLng: function (latlng) {
+    getAddress: function(latlng, callbacks){
         this.geocoder.geocode({'location': latlng}, function(results, status) {
-          if (status === 'OK') {
-            if (results[1]) {
-                map.placeMarker(latlng);
-                map.ajaxCallAdd(results[1].geometry.location, results[1].formatted_address);
+          if (status === google.maps.GeocoderStatus.OK) {
+            if (results[0]) {
+                var data = {
+                    location: results[0].geometry.location,
+                    address: results[0].formatted_address
+                };
+                for (var i = 0; i < callbacks.length; i++) {
+                    var func = callbacks[i];
+                    func(data);
+                }
+                return data;
             } else {
-              window.alert('No results found');
+                window.alert('No results found');
             }
           } else {
-            window.alert('Geocoder failed due to: ' + status);
+              window.alert('Geocoder failed due to: ' + status);
           }
         });
     },
 
-    getLatLng: function(address){
+    setAddressFromLatLng: function (data) {
+        map.placeMarker(data.location);
+        map.ajaxCallAdd(data.location, data.address);
+    },
+
+    setLocationFromAddress: function (data) {
+        map.placeMarker(data.location);
+        map.ajaxCallAdd(data.location, data.address);
+    },
+
+    getLatLng: function(address, callbacks){
         this.geocoder.geocode({"address": address}, function(results, status) {
             if (status === google.maps.GeocoderStatus.OK) {
                 var location = results[0].geometry.location;
-                map.mapObj.setCenter(location);
-                map.placeMarker(location);
-                map.ajaxCallAdd(location, address);
+                var data = {
+                    location: location,
+                    address: address
+                };
+                for (var i = 0; i < callbacks.length; i++) {
+                    var func = callbacks[i];
+                    func(data);
+                }
+                return data;
             } else {
                 alert("Geocoder failed due to: " + status);
             }
@@ -53,19 +81,19 @@ var map = {
     },
 
     clickEvent : function(){
+        var map = this;
         google.maps.event.addListener(this.mapObj, 'click', function(event){
-            //TODO
+            map.getAddress(event.latLng, [map.placeMarker, map.populateForm]);
         });
         google.maps.event.addListener(this.mapObj, 'dblclick', function(event) {
-            console.log(event);
-            setTimeout(map.geocodeLatLng(event.latLng), 600);
+            setTimeout(map.getAddress(event.latLng, [map.setAddressFromLatLng, map.placeMarker]), 600);
         });
     },
 
-    placeMarker: function(location) {
+    placeMarker: function(data) {
         new google.maps.Marker({
-            position: location,
-            map: this.mapObj
+            position: data.location,
+            map: map.mapObj
         });
     },
 
@@ -95,12 +123,13 @@ var map = {
                 var jsonData = JSON.parse(xmlHttp.responseText);
                 if (jsonData.status) {
                     for (loc of jsonData.data) {
-                        pos = new google.maps.LatLng(loc['lat'], loc['lng']);
-                        map.placeMarker(pos);
-                    }
+                        var pos = new google.maps.LatLng(loc['lat'], loc['lng']);
+                        var data = {location: pos}
 
+                        map.placeMarker(data);
+                    }
                 } else {
-                    console.log("błąd");
+                    console.log("error");
                 }
             }
         };
@@ -110,15 +139,18 @@ var map = {
     setSearching: function(){
         var button =  document.querySelector('#find-button');
         button.onclick = function(e){
-            map.getLatLng(map.searchButton.value);
+            map.setLocationFromAddress(map.searchButton.value);
         };
+    },
+
+    populateForm: function(data){
+        document.querySelector('#'+map.formInputs.lat).value = data.location.lat();
+        document.querySelector('#'+map.formInputs.lng).value = data.location.lng();
+        document.querySelector('#'+map.formInputs.name).value = data.address;
     },
 
     setAutocomplete: function(){
         this.autocomplete = new google.maps.places.Autocomplete(map.searchButton, {types: ['geocode']});
-        this.autocomplete.addListener('place_changed', function(){
-            //TODO
-        });
     },
 
     init: function(initData) {

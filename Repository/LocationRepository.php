@@ -22,4 +22,11 @@ class LocationRepository extends \Doctrine\ORM\EntityRepository
 
         return $results;
     }
+
+    public function deleteAll(){
+        $em = $this->getEntityManager();
+        $builder = $em->createQuery('Delete MapBundle\Entity\Location');
+        $results = $builder->getResult();
+        return $results;
+    }
 }

@@ -11,3 +11,8 @@ map_get:
     path:     /map_get
     defaults: { _controller: MapBundle:Map:get }
     methods:  [GET,POST]
+
+map_deleteAll:
+    path:     /map_delete_all
+    defaults: { _controller: MapBundle:Map:deleteAll }
+    methods:  [GET,POST]
