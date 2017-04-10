@@ -1,0 +1,10 @@
+map:
+    find-location: 'Find Location'
+    enter-searching-value: 'Enter searching location'
+    start-typing: 'start typing'
+    lat: Latitude
+    lng: Longitude
+    name: Name
+    deleted-all: All markers has been deleted
+    back: Back
+    delete: Delete

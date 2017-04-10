@@ -8,7 +8,13 @@
             <button id="find-button" type="submit" name="button"> {{'map.find-location'|trans}}</button>
             <label for="search">{{'map.enter-searching-value'|trans}}</label>
             <input id="search" type="text" name="text" value="" placeholder="{{'map.start-typing'|trans}}">
+
+            {{ form(form) }}
         </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12"><a href="{{path('map_deleteAll')}}" class="btn btn-primary">{{'map.delete'|trans}}</a></div>
     </div>
 </div>
 

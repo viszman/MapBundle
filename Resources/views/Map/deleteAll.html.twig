@@ -1,0 +1,11 @@
+{% extends "MapBundle:Map:base.html.twig" %}
+{% block content %}
+<!-- Map Section -->
+<div class="container">
+    <div class="row">
+        <div class="well"><p>{{'map.deleted-all'|trans}}</p></div>
+
+        <a class="btn btn-primary" href="{{path('map_homepage')}}">{{'map.back'|trans}}</a>
+    </div>
+</div>
+{% endblock %}
