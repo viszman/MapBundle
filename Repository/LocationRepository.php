@@ -10,4 +10,16 @@ namespace MapBundle\Repository;
  */
 class LocationRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function getAll(){
+        $em = $this->getEntityManager();
+        $builder = $em->createQueryBuilder();
+        $builder
+            ->select(array('l'))
+            ->from('MapBundle\Entity\Location', 'l');
+
+        $query = $builder->getQuery();
+        $results = $query->getResult();
+
+        return $results;
+    }
 }

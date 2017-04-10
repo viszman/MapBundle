@@ -1,3 +1,13 @@
 map_homepage:
     path:     /
     defaults: { _controller: MapBundle:Map:index }
+
+map_add:
+    path:     /map_add
+    defaults: { _controller: MapBundle:Map:add }
+    methods:  POST
+
+map_get:
+    path:     /map_get
+    defaults: { _controller: MapBundle:Map:get }
+    methods:  [GET,POST]

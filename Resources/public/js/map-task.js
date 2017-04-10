@@ -29,7 +29,7 @@ var map = {
           if (status === 'OK') {
             if (results[1]) {
                 map.placeMarker(latlng);
-                console.log(results[1].formatted_address);
+                map.ajaxCallAdd(results[1].geometry.location, results[1].formatted_address);
             } else {
               window.alert('No results found');
             }
@@ -45,8 +45,9 @@ var map = {
                 var location = results[0].geometry.location;
                 map.mapObj.setCenter(location);
                 map.placeMarker(location);
+                map.ajaxCallAdd(location, address);
             } else {
-                alert("Rozpoznanie położenia nie udalo się z nastepujących przyczyn: " + status);
+                alert("Geocoder failed due to: " + status);
             }
         })
     },
@@ -66,6 +67,44 @@ var map = {
             position: location,
             map: this.mapObj
         });
+    },
+
+    ajaxCallAdd : function(location, address){
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open("POST", document.querySelector("#ajaxCallAdd").value, true); // true for asynchronous
+        xmlHttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        var sendString = 'lat='+location.lat()+'&lng='+location.lng()+'&name='+address;
+        xmlHttp.onreadystatechange = function() {
+            if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+                var jsonData = JSON.parse(xmlHttp.responseText);
+                if (jsonData.status) {
+                    console.log('marker added to Database');
+                } else {
+                    console.log("Error");
+                }
+            }
+        };
+        xmlHttp.send(sendString);
+    },
+
+    ajaxCallGet : function(){
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open("POST", document.querySelector("#ajaxCallGet").value, true); // true for asynchronous
+        xmlHttp.onreadystatechange = function() {
+            if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+                var jsonData = JSON.parse(xmlHttp.responseText);
+                if (jsonData.status) {
+                    for (loc of jsonData.data) {
+                        pos = new google.maps.LatLng(loc['lat'], loc['lng']);
+                        map.placeMarker(pos);
+                    }
+
+                } else {
+                    console.log("błąd");
+                }
+            }
+        };
+        xmlHttp.send();
     },
 
     setSearching: function(){
@@ -88,6 +127,7 @@ var map = {
         this.clickEvent();
         this.setSearching();
         this.setAutocomplete();
+        this.ajaxCallGet();
     }
 }
 

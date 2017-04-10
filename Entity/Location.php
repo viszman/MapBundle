@@ -56,6 +56,13 @@ class Location
      */
     private $info;
 
+    /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        $this->created = new \DateTime();
+    }
 
     /**
      * Get id
