@@ -95,6 +95,7 @@ var map = {
             position: data.location,
             map: map.mapObj
         });
+        map.mapObj.setCenter(data.location);
     },
 
     ajaxCallAdd : function(location, address){
@@ -139,7 +140,7 @@ var map = {
     setSearching: function(){
         var button =  document.querySelector('#find-button');
         button.onclick = function(e){
-            map.setLocationFromAddress(map.searchButton.value);
+            map.getLatLng(map.searchButton.value, [map.setAddressFromLatLng, map.placeMarker]);
         };
     },
 
