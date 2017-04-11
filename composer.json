@@ -1,0 +1,26 @@
+{
+    "name": "viszman/map-bundle",
+    "type": "symfony-bundle",
+    "description": "Integration of the gedmo/doctrine-extensions with Symfony2 Using simple clicks to interacts with ",
+    "keywords": ["google", "maps", "marker", "extensions"],
+    "homepage": "https://github.com/viszman/MapBundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Daniel Klimowicz",
+            "email": "viszman@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.2",
+        "symfony/framework-bundle": ">=3.0",
+    },
+    "autoload": {
+        "psr-0": { "MapBundle\\": "" }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1"
+        }
+    }
+}
